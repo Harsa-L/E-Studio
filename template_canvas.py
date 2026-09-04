@@ -48,6 +48,12 @@ class TemplateCanvas(QGraphicsScene):
         self.canvas_bounds = self.outer_rect.adjusted(-pad_px, -pad_px, pad_px, pad_px)
         self.setSceneRect(self.canvas_bounds)
 
+        for item_data in self.template.items:
+            try:
+                self.addItem(BaseLabelItem.from_dict(item_data, self.scale))
+            except (KeyError, TypeError, ValueError):
+                continue
+
     def drawBackground(self, painter: QPainter, rect: QRectF):
         painter.save()
 
@@ -72,7 +78,7 @@ class TemplateCanvas(QGraphicsScene):
 
         painter.restore()
 
-    def validate_item_bounds((self)) -> List[BaseLabelItem]:
+    def validate_item_bounds(self) -> List[BaseLabelItem]:
         """Affiche les bandes d'avertissement clignotantes pour les objets hors-limites."""
         for overlay in self.warning_overlays:
             self.removeItem(overlay)
@@ -99,5 +105,12 @@ class TemplateCanvas(QGraphicsScene):
             if isinstance(item, BaseLabelItem) and item not in faulty_items:
                 valid_data.append(item.to_dict())
 
-        self.template.items = valid_data
-        return self.template.to_json()
+        return self._serialize_items(valid_data)
+
+    def _serialize_items(self, items: List[dict]) -> str:
+        previous_items = self.template.items
+        try:
+            self.template.items = items
+            return self.template.to_json()
+        finally:
+            self.template.items = previous_items

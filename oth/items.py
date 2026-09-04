@@ -3,12 +3,12 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Optional, List, Dict, Any, Type
-from PySide6.QtCore import Qt, QRectF
+from PySide6.QtCore import Qt, QRectF, QPointF
 from PySide6.QtGui import QPainter, QPen, QBrush, QColor
 
-from units import Length
-from models import Paragraph, CharFormat, VAlign, Overflow, SizingMode
-from layout import LayoutEngine, LayoutResult
+from .units import Length
+from .models import Paragraph, CharFormat, VAlign, Overflow, SizingMode
+from .layout import LayoutEngine, LayoutResult
 
 
 class BaseItem(ABC):
@@ -138,7 +138,7 @@ class TextItem(BaseItem):
         painter.save()
         painter.translate(content.left(), content.top() + v_offset)
         for pl in layout_result.paragraph_layouts:
-            pl.qlayout.draw(painter, Qt.PointF(0, pl.y_top))
+            pl.qlayout.draw(painter, QPointF(0, pl.y_top))
         painter.restore()
 
         if not self.plain_text() and self.placeholder:

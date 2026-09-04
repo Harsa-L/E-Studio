@@ -6,10 +6,10 @@ from typing import List, Tuple, Optional, TYPE_CHECKING
 from PySide6.QtCore import QRectF, QPointF, Qt
 from PySide6.QtGui import QFont, QTextLayout, QTextOption, QTextCharFormat, QTextLine, QColor
 
-from models import CharFormat, Paragraph, Overflow, TextAlignment
+from .models import CharFormat, Paragraph, Overflow, TextAlignment
 
 if TYPE_CHECKING:
-    from items import TextItem
+    from .items import TextItem
 
 
 # Mapping entre le domaine métier (TextAlignment) et l'IHM (Qt)

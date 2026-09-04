@@ -4,10 +4,10 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Optional, Tuple, TYPE_CHECKING
 
-from models import Position, CharFormat, ParagraphFormat
+from .models import Position, CharFormat, ParagraphFormat
 
 if TYPE_CHECKING:
-    from items import TextItem
+    from .items import TextItem
 
 
 class TextCursor:

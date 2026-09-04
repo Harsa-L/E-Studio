@@ -80,6 +80,7 @@ class PropertyInspectorWidget(QWidget):
 
             for prop in props:
                 widget = self._create_widget(prop)
+                widget._property_spec = prop
                 group_layout.addRow(f"{prop.label} :", widget)
 
             self.container_layout.addWidget(group_box)
@@ -120,14 +121,13 @@ class PropertyInspectorWidget(QWidget):
         if self._is_updating or not self.selected_items: return
         self._is_updating = True
 
-        common_props = self._get_common_properties()
         for i in range(self.container_layout.count()):
             group = self.container_layout.itemAt(i).widget()
             if isinstance(group, QGroupBox):
                 form = group.layout()
                 for row in range(form.rowCount()):
                     widget = form.itemAt(row, QFormLayout.FieldRole).widget()
-                    prop_spec = common_props[row]
+                    prop_spec = widget._property_spec
 
                     vals = [p[prop_spec.key].getter() for item in self.selected_items 
                             for p in [{sp.key: sp for sp in item.get_properties()}]]

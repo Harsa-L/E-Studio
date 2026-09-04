@@ -13,8 +13,8 @@ from typing import Optional, Dict, Any, List
 from PySide6.QtCore import Qt, QRectF, QPointF
 from PySide6.QtGui import QPainter, QImage, QPixmap, QColor, QPen, QBrush, QFont, QPainterPath
 
-from items import BaseItem, ItemFactory
-from units import Length
+from .items import BaseItem, ItemFactory
+from .units import Length
 
 # Chargement conditionnel des bibliothèques externes pour éviter un crash si non installées
 try:
@@ -224,7 +224,7 @@ class BarcodeItem(BaseItem):
                     bc = Code128(self.code)
 
                 # Extraction de la chaîne de barres ('1' pour noir, '0' pour blanc)
-                bars_pattern = bc.to_ascii()
+                bars_pattern = bc.build()[0]
 
                 text_height = Length.from_pt(10) if self.show_text else 0.0
                 bars_rect_height = max(1.0, target_rect.height() - text_height)

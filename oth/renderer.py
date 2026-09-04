@@ -6,7 +6,7 @@ from typing import List, Dict, Any
 from PySide6.QtCore import Qt, QSizeF
 from PySide6.QtGui import QPainter, QImage
 
-from items import BaseItem
+from .items import BaseItem
 
 
 class BatchRenderer:

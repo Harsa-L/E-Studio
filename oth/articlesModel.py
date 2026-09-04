@@ -82,11 +82,13 @@ class BaseArticle(ABC):
     pricing: PricingInfo
     store_name: str = ""
     vendor_name: str = ""
+    currency: str = "€"
+    tiers: list[Dict[str, Any]] = field(default_factory=list)
     hierarchy: HierarchyInfo = field(default_factory=HierarchyInfo)
     packaging: PackagingInfo = field(default_factory=PackagingInfo)
     tax: TaxInfo = field(default_factory=TaxInfo)
 
-    def to_binding_context((self)) -> Dict[str, Any]:
+    def to_binding_context(self) -> Dict[str, Any]:
         """Convertit l'article en dictionnaire plat enrichi pour le moteur de templates/étiquettes.
         
         Permet de lier directement des clés comme 'PRIX_TTC', 'TAUX_PROMO' ou 'PRIX_KILO' dans le canvas UI.
@@ -120,18 +122,27 @@ class BaseArticle(ABC):
             "CASE_SIZE": str(pkg.case_size),
             "CASE_UNIT": pkg.case_unit,
 
-            # Prix & Tarification
-            "SELLING_PRICE": f"{p.selling_price:.2f} €",
-            "PROMOPRICE": f"{p.promo_price:.2f} €" if p.promo_price else "",
-            "EFFECTIVE_PRICE": f"{p.effective_price:.2f} €",
+            # Prix & Tarification. Numeric keys are consumed by TierResolver;
+            # display-specific keys keep formatting out of the business layer.
+            "CURRENCY": self.currency,
+            "TIERS": list(self.tiers),
+            "SELLING_PRICE": p.selling_price,
+            "SELLING_PRICE_DISPLAY": f"{p.selling_price:.2f} {self.currency}",
+            "PROMOPRICE": p.promo_price,
+            "PROMOPRICE_DISPLAY": f"{p.promo_price:.2f} {self.currency}" if p.promo_price is not None else "",
+            "EFFECTIVE_PRICE": p.effective_price,
+            "EFFECTIVE_PRICE_DISPLAY": f"{p.effective_price:.2f} {self.currency}",
             "HAS_PROMO": p.has_promo,
             "DISCOUNT_PCT": f"-{int(p.discount_percentage)}%" if p.has_promo else "",
-            "DISCOUNT_AMOUNT": f"-{p.discount_amount:.2f} €" if p.has_promo else "",
+            "DISCOUNT_AMOUNT": p.discount_amount if p.has_promo else 0.0,
+            "DISCOUNT_AMOUNT_DISPLAY": f"-{p.discount_amount:.2f} {self.currency}" if p.has_promo else "",
             "ITEM_TYPE": p.item_type,
 
             # Taxes & Prix HT
-            "PRICE_HT": f"{price_ht:.2f} €",
-            "TAX_AMOUNT": f"{vat_amount:.2f} €",
+            "PRICE_HT": price_ht,
+            "PRICE_HT_DISPLAY": f"{price_ht:.2f} {self.currency}",
+            "TAX_AMOUNT": vat_amount,
+            "TAX_AMOUNT_DISPLAY": f"{vat_amount:.2f} {self.currency}",
             "TAX": t.tax,
             "TAX_RATE": f"{t.tax_rate:.1f}%",
             "TAX_TYPE": t.tax_type,

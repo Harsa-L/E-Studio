@@ -5,8 +5,8 @@ from PySide6.QtCore import Qt, QTimer, QRectF
 from PySide6.QtGui import QPainter, QPen, QBrush, QColor
 from PySide6.QtWidgets import QWidget
 
-from items import TextItem
-from cursor import TextCursor
+from .items import TextItem
+from .cursor import TextCursor
 
 
 class TextItemView(QWidget):

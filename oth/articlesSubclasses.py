@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from typing import Dict, Any
-from articles.models import BaseArticle
+from .articlesModel import BaseArticle
 
 
 @dataclass

@@ -10,6 +10,7 @@ from PySide6.QtGui import QAction, QKeySequence
 
 from gabarit_wizard import NewGabaritDialog
 from template_canvas import TemplateCanvas
+from template_model import LabelTemplate
 from property_inspector import PropertyInspectorWidget
 from label_items import BaseLabelItem, TierPriceLabelItem
 
@@ -47,6 +48,11 @@ class EditorMainWindow(QMainWindow):
         act_save.triggered.connect(self.on_file_save)
         file_menu.addAction(act_save)
 
+        act_open = QAction("Ouvrir JSON", self)
+        act_open.setShortcut(QKeySequence.Open)
+        act_open.triggered.connect(self.on_file_open)
+        file_menu.addAction(act_open)
+
         # Barre d'outils
         toolbar = QToolBar("Actions")
         self.addToolBar(toolbar)
@@ -82,7 +88,10 @@ class EditorMainWindow(QMainWindow):
 
     def on_add_tier_item(self):
         if not self.canvas: return
-        item = TierPriceLabelItem(f"tier_{len(self.canvas.items())}", x_mm=10, y_mm=10)
+        item = TierPriceLabelItem(
+            f"tier_{len(self.canvas.items())}", x_mm=10, y_mm=10,
+            scale_px_per_mm=self.canvas.scale
+        )
         self.canvas.addItem(item)
         item.setSelected(True)
 
@@ -99,12 +108,32 @@ class EditorMainWindow(QMainWindow):
             QMessageBox.critical(self, "Erreur", "Aucun gabarit actif à sauvegarder.")
             return
 
-        json_str = self.canvas.finalize_and_save_template()
         path, _ = QFileDialog.getSaveFileName(self, "Sauvegarder Gabarit JSON", "", "JSON (*.json)")
-        if path:
+        if not path:
+            return
+        try:
+            json_str = self.canvas.finalize_and_save_template()
             with open(path, "w", encoding="utf-8") as f:
                 f.write(json_str)
-            QMessageBox.information(self, "Succès", "Gabarit sauvegardé. Les objets hors-limites ont été automatiquement exclus.")
+        except (OSError, ValueError) as error:
+            QMessageBox.critical(self, "Erreur", f"Impossible de sauvegarder le gabarit : {error}")
+            return
+        QMessageBox.information(self, "Succès", "Gabarit sauvegardé. Les objets hors-limites ont été automatiquement exclus.")
+
+    def on_file_open(self):
+        path, _ = QFileDialog.getOpenFileName(self, "Ouvrir Gabarit JSON", "", "JSON (*.json)")
+        if not path:
+            return
+        try:
+            with open(path, "r", encoding="utf-8") as file:
+                template = LabelTemplate.from_json(file.read())
+            self.canvas = TemplateCanvas(template)
+            self.view.setScene(self.canvas)
+            self.canvas.selectionChanged.connect(self.on_selection_changed)
+            self.act_add_tier.setEnabled(True)
+            self.act_validate.setEnabled(True)
+        except (OSError, ValueError, TypeError, KeyError) as error:
+            QMessageBox.critical(self, "Erreur", f"Impossible d'ouvrir le gabarit : {error}")
 
 
 if __name__ == "__main__":

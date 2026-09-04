@@ -31,13 +31,22 @@ class ImpositionCalculator:
         page_size_name: str = "A4",
         gap_mm: float = 0.0
     ) -> PageImpositionResult:
-        page_w, page_h = cls.PAGE_SIZES.get(page_size_name.upper(), (210.0, 297.0))
+        if template_w_mm <= 0 or template_h_mm <= 0:
+            raise ValueError("Template dimensions must be greater than zero.")
+        if gap_mm < 0:
+            raise ValueError("Gap cannot be negative.")
+        try:
+            page_w, page_h = cls.PAGE_SIZES[page_size_name.upper()]
+        except KeyError as error:
+            raise ValueError(f"Unsupported page size: {page_size_name}") from error
 
         total_w = template_w_mm + outer_margins.left + outer_margins.right
         total_h = template_h_mm + outer_margins.top + outer_margins.bottom
 
         cols = int(page_w // (total_w + gap_mm))
         rows = int(page_h // (total_h + gap_mm))
+        if cols < 1 or rows < 1:
+            raise ValueError("The template does not fit on the selected page.")
 
         used_w = cols * total_w + max(0, cols - 1) * gap_mm
         used_h = rows * total_h + max(0, rows - 1) * gap_mm
