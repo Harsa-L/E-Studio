@@ -1,0 +1,51 @@
+{
+  "name": "Étiquette_A6_Paliers",
+  "width_mm": 105.0,
+  "height_mm": 148.0,
+  "inner_margins_mm": {
+    "top": 5.0,
+    "bottom": 5.0,
+    "left": 5.0,
+    "right": 5.0
+  },
+  "outer_margins_mm": {
+    "top": 3.0,
+    "bottom": 3.0,
+    "left": 3.0,
+    "right": 3.0
+  },
+  "bg_color": "#FFFFFF",
+  "bg_opacity": 1.0,
+  "items": [
+    {
+      "id": "ellipse_1",
+      "type": "RichLabelItem",
+      "x_mm": 10.0,
+      "y_mm": 24.55,
+      "w_mm": 35.0,
+      "h_mm": 25.0,
+      "rich_type": "ellipse",
+      "rich_properties": {
+        "binding_key": null,
+        "rotation": 0.0,
+        "z_index": 0,
+        "fill_color": "#FFFFFF",
+        "border_color": "#263238",
+        "border_width": 1.0
+      }
+    },
+    {
+      "id": "tier_1",
+      "type": "TierPriceLabelItem",
+      "x_mm": 32.49,
+      "y_mm": 47.3,
+      "w_mm": 60.0,
+      "h_mm": 15.0,
+      "primary_tier": 1,
+      "prefix_text": "À partir de",
+      "unit_label": "FCFA",
+      "strict_required": false
+    }
+  ],
+  "schema_version": 1
+}

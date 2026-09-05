@@ -1,8 +1,10 @@
-"""Sous-classes d'articles spécialisées selon la catégorie métier."""
+"""Specialized article models for weight and case-based pricing."""
+
+from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Dict, Any
-from .articlesModel import BaseArticle
+from article_models import BaseArticle
 
 
 @dataclass

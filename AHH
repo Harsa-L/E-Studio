@@ -1,0 +1,140 @@
+{
+  "name": "Étiquette_A6_Paliers",
+  "width_mm": 105.0,
+  "height_mm": 148.0,
+  "inner_margins_mm": {
+    "top": 5.0,
+    "bottom": 5.0,
+    "left": 5.0,
+    "right": 5.0
+  },
+  "outer_margins_mm": {
+    "top": 3.0,
+    "bottom": 3.0,
+    "left": 3.0,
+    "right": 3.0
+  },
+  "bg_color": "#FFFFFF",
+  "bg_opacity": 1.0,
+  "items": [
+    {
+      "id": "ellipse_1",
+      "type": "RichLabelItem",
+      "x_mm": 10.0,
+      "y_mm": 24.55,
+      "w_mm": 38.0,
+      "h_mm": 38.0,
+      "rich_type": "ellipse",
+      "rich_properties": {
+        "binding_key": null,
+        "rotation": -55.0,
+        "z_index": 16,
+        "fill_color": "#FFFFAA",
+        "border_color": "#232395",
+        "border_width": 8.0
+      }
+    },
+    {
+      "id": "barcode_1",
+      "type": "RichLabelItem",
+      "x_mm": 10.0,
+      "y_mm": 10.0,
+      "w_mm": 55.0,
+      "h_mm": 22.0,
+      "rich_type": "barcode",
+      "rich_properties": {
+        "binding_key": null,
+        "rotation": 0.0,
+        "z_index": 0,
+        "code": "123456789012",
+        "barcode_type": "code128",
+        "show_text": true,
+        "bar_color": "#000000"
+      }
+    },
+    {
+      "id": "qrcode_1",
+      "type": "RichLabelItem",
+      "x_mm": 13.17,
+      "y_mm": 63.97,
+      "w_mm": 28.0,
+      "h_mm": 28.0,
+      "rich_type": "qrcode",
+      "rich_properties": {
+        "binding_key": null,
+        "rotation": 0.0,
+        "z_index": 0,
+        "content": "https://example.com",
+        "module_color": "#000000",
+        "background_color": "#FFFFFF"
+      }
+    },
+    {
+      "id": "tier_1",
+      "type": "TierPriceLabelItem",
+      "x_mm": 32.49,
+      "y_mm": 47.3,
+      "w_mm": 60.0,
+      "h_mm": 15.0,
+      "primary_tier": 1,
+      "prefix_text": "À partir de",
+      "unit_label": "FCFA",
+      "strict_required": true
+    },
+    {
+      "id": "text_1",
+      "type": "RichLabelItem",
+      "x_mm": 11.06,
+      "y_mm": 8.68,
+      "w_mm": 28.0,
+      "h_mm": 18.0,
+      "rich_type": "text",
+      "rich_properties": {
+        "binding_key": null,
+        "rotation": 0.0,
+        "z_index": -6,
+        "paragraphs": [
+          {
+            "runs": [
+              {
+                "text": "Texte",
+                "format": {
+                  "font_family": "Arial",
+                  "font_size": 14.0,
+                  "bold": false,
+                  "italic": false,
+                  "underline": false,
+                  "strikethrough": false,
+                  "color": "#000000",
+                  "baseline_shift": 0.0,
+                  "tracking": 0.0,
+                  "small_caps": false
+                }
+              }
+            ],
+            "format": {
+              "alignment": "left",
+              "indent_left": 0.0,
+              "indent_right": 0.0,
+              "indent_first_line": 0.0,
+              "line_spacing": 1.0,
+              "space_before": 0.0,
+              "space_after": 0.0,
+              "bullet": null
+            }
+          }
+        ],
+        "fill_color": null,
+        "fill_opacity": 255,
+        "border_color": "#cccccc",
+        "border_width": 0.0,
+        "corner_radius": 0.0,
+        "valign": "TOP",
+        "overflow": "AUTOFIT_SHRINK",
+        "wrap": true,
+        "placeholder": ""
+      }
+    }
+  ],
+  "schema_version": 1
+}

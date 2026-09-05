@@ -1,4 +1,6 @@
-"""Moteur de résolution des paliers de prix avec fallback et annulation."""
+"""Resolve price tiers from an article binding context."""
+
+from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import List, Dict, Any

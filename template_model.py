@@ -1,12 +1,13 @@
-"""Modèle de données du Gabarit (Holder) sans paramètres prédéfinis."""
+"""Typed, versioned document model for printable label templates."""
 
 from __future__ import annotations
 from dataclasses import dataclass, field, asdict
-from typing import List, Dict, Any
+from typing import Any, Dict, List, TypeAlias
 import json
 
 
 SCHEMA_VERSION = 1
+TemplateItemData: TypeAlias = Dict[str, Any]
 
 
 @dataclass
@@ -28,7 +29,7 @@ class LabelTemplate:
     outer_margins_mm: Margins
     bg_color: str = "#FFFFFF"
     bg_opacity: float = 1.0
-    items: List[Dict[str, Any]] = field(default_factory=list)
+    items: List[TemplateItemData] = field(default_factory=list)
 
     def validate(self) -> List[str]:
         errors = []

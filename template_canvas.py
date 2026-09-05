@@ -1,8 +1,8 @@
 """Canvas de disposition créé uniquement sur base d'un Gabarit validé."""
 
-from typing import List
+from typing import Any, Dict, List
 from PySide6.QtCore import QRectF, Qt
-from PySide6.QtGui import QPainter, QColor, QPen
+from PySide6.QtGui import QImage, QPainter, QColor, QPen
 from PySide6.QtWidgets import QGraphicsScene
 
 from template_model import LabelTemplate
@@ -95,6 +95,57 @@ class TemplateCanvas(QGraphicsScene):
                     self.warning_overlays.append(overlay)
 
         return faulty_items
+
+    def next_item_id(self, prefix: str) -> str:
+        """Return a stable, collision-free identifier for a newly inserted item."""
+        used_ids = {item.item_id for item in self.items() if isinstance(item, BaseLabelItem)}
+        index = 1
+        while f"{prefix}_{index}" in used_ids:
+            index += 1
+        return f"{prefix}_{index}"
+
+    def export_png(self, path: str, dpi: float = 300.0, data_record: Dict[str, Any] | None = None) -> None:
+        """Render the label area to a print-resolution PNG.
+
+        Rich items receive ``data_record`` during this render only.  The
+        editor objects stay unchanged, so preview data cannot accidentally alter
+        the saved template.
+        """
+        if dpi <= 0:
+            raise ValueError("DPI must be greater than zero.")
+        width_px = max(1, round(self.template.width_mm * dpi / 25.4))
+        height_px = max(1, round(self.template.height_mm * dpi / 25.4))
+        image = QImage(width_px, height_px, QImage.Format_ARGB32_Premultiplied)
+        image.fill(Qt.transparent)
+        image.setDotsPerMeterX(round(dpi / 0.0254))
+        image.setDotsPerMeterY(round(dpi / 0.0254))
+
+        bound_items = [item for item in self.items() if hasattr(item, "set_export_record")]
+        selected_items = [item for item in self.selectedItems() if isinstance(item, BaseLabelItem)]
+        overlay_visibility = [(overlay, overlay.isVisible()) for overlay in self.warning_overlays]
+        for overlay, _ in overlay_visibility:
+            overlay.hide()
+        for item in selected_items:
+            item.setSelected(False)
+        for item in bound_items:
+            item.set_export_record(data_record or {})
+
+        try:
+            painter = QPainter(image)
+            painter.setRenderHint(QPainter.Antialiasing)
+            painter.setRenderHint(QPainter.TextAntialiasing)
+            self.render(painter, QRectF(0, 0, width_px, height_px), self.label_rect)
+            painter.end()
+        finally:
+            for item in bound_items:
+                item.set_export_record(None)
+            for item in selected_items:
+                item.setSelected(True)
+            for overlay, was_visible in overlay_visibility:
+                overlay.setVisible(was_visible)
+
+        if not image.save(path, "PNG"):
+            raise OSError(f"Unable to write PNG file: {path}")
 
     def finalize_and_save_template(self) -> str:
         """Sauvegarde le Gabarit en EXCLUANT les objets hors-limites."""

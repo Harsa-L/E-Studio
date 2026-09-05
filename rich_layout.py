@@ -6,10 +6,10 @@ from typing import List, Tuple, Optional, TYPE_CHECKING
 from PySide6.QtCore import QRectF, QPointF, Qt
 from PySide6.QtGui import QFont, QTextLayout, QTextOption, QTextCharFormat, QTextLine, QColor
 
-from .models import CharFormat, Paragraph, Overflow, TextAlignment
+from rich_text_models import CharFormat, Paragraph, Overflow, TextAlignment
 
 if TYPE_CHECKING:
-    from .items import TextItem
+    from render_items import TextItem
 
 
 # Mapping entre le domaine métier (TextAlignment) et l'IHM (Qt)
@@ -17,7 +17,7 @@ ALIGNMENT_MAP = {
     TextAlignment.LEFT: Qt.AlignLeft,
     TextAlignment.CENTER: Qt.AlignHCenter,
     TextAlignment.RIGHT: Qt.AlignRight,
-    TextAlignment.JUSTIFY: Qt.AlignJustified,
+    TextAlignment.JUSTIFY: Qt.AlignmentFlag.AlignJustify,
 }
 
 

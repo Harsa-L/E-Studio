@@ -1,9 +1,12 @@
-"""Modèle de domaine orienté Article de Vente avec calculs métier automatisés."""
+"""Typed sales-article models and their label binding context."""
 
 from __future__ import annotations
 from dataclasses import dataclass, field
 from abc import ABC
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional, TypeAlias
+
+
+BindingContext: TypeAlias = Dict[str, Any]
 
 
 @dataclass(frozen=True)
@@ -88,7 +91,7 @@ class BaseArticle(ABC):
     packaging: PackagingInfo = field(default_factory=PackagingInfo)
     tax: TaxInfo = field(default_factory=TaxInfo)
 
-    def to_binding_context(self) -> Dict[str, Any]:
+    def to_binding_context(self) -> BindingContext:
         """Convertit l'article en dictionnaire plat enrichi pour le moteur de templates/étiquettes.
         
         Permet de lier directement des clés comme 'PRIX_TTC', 'TAUX_PROMO' ou 'PRIX_KILO' dans le canvas UI.
