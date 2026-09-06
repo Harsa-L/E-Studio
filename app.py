@@ -4,13 +4,13 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from main import EditorMainWindow
+from home_window import HomeWindow
 
 
 def main() -> int:
     """Start the desktop editor and return Qt's process exit status."""
     app = QApplication(sys.argv)
-    window = EditorMainWindow()
+    window = HomeWindow()
     window.show()
     return app.exec()
 

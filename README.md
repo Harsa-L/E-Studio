@@ -1,37 +1,61 @@
 # E-Studio
 
-E-Studio is a PySide6 desktop application for designing dynamic printable
-price tags and product labels. A user creates a physical label template,
-places editable objects on a canvas, binds selected objects to product data,
-validates printable bounds, saves the template as JSON, and exports a PNG for
-printing.
-
-The project is intentionally split into three layers:
-
-1. **Document and business models** describe templates, products, prices,
-   units, and tier-selection rules without depending on the editor window.
-2. **Rendering primitives** draw text, shapes, images, QR codes, barcodes,
-   lines, and ellipses with `QPainter`.
-3. **Qt editor components** provide selection, movement, resizing, property
-   editing, persistence, preview-data loading, and file actions.
+E-Studio is a PySide6 desktop application for designing and generating printable
+price labels. It provides two routes: a Home screen for gabarit discovery and
+an editor, and a protected Generation workspace for importing data, previewing,
+validating, exporting, and printing labels.
 
 ## Features
 
 - Create label templates with millimetre dimensions and inner/outer margins.
 - Add tier-price blocks and rich objects from the **Insérer** menu.
 - Move, resize, select, and edit objects through the property inspector.
-- Render rich text with paragraphs, character formatting, alignment, wrapping,
-  overflow handling, and automatic shrink-to-fit behavior.
-- Insert images, QR codes, Code 128 barcodes, EAN-13 barcodes, lines, shapes,
-  and ellipses.
-- Bind text, images, QR codes, barcodes, and tier-price blocks to data keys.
-- Highlight objects that leave the printable inner area.
-- Exclude invalid objects when saving a template.
-- Export the label area to a 300 DPI PNG.
-- Render reusable item objects headlessly through `BatchRenderer`.
-- Calculate article pricing values and resolve price tiers with fallbacks.
+- Render rich text with formatting, alignment, wrapping, and overflow handling.
+- Insert images, QR codes, barcodes, lines, shapes, and ellipses.
+- Bind fields through canonical domain keys or custom dynamic keys.
+- Use non-printing background reference images while designing gabarits.
+- Import Excel data, edit rows, reconstruct tiers, and review diagnostics.
+- Export PNG/PDF, compose imposed sheets, and print through the system printer.
 
 ## Requirements
+
+- Python 3.10 or newer
+- PySide6 6.6 or newer
+- `qrcode` 7.4 or newer
+- `python-barcode` 0.15 or newer
+- `openpyxl` 3.1 or newer
+
+Install the dependencies from [requirements.txt](requirements.txt):
+
+```bash
+python -m venv .venv
+.venv/bin/pip install -r requirements.txt
+```
+
+## Starting The Application
+
+The supported entry point is [app.py](app.py):
+
+```bash
+.venv/bin/python app.py
+```
+
+The application opens the Home screen. Choose an existing gabarit to edit or
+generate labels, or create a new gabarit. Generation uses an immutable copy of
+the selected gabarit; editing it happens in a separate window.
+
+### Typical workflow
+
+1. Create or select a gabarit from Home.
+2. Design the gabarit and optionally add a non-printing reference image.
+3. Save the gabarit, then choose **Générer des étiquettes**.
+4. Import Excel, confirm mappings and the article grouping key, and resolve tier conflicts.
+5. Correct source rows manually and review preflight diagnostics.
+6. Preview rows, export PNG/PDF, or print through the system printer.
+
+Excel import supports `.xlsx` and `.xlsm`. Formula cells use cached values, and
+legacy `.xls`/`.xlsb` files must be converted first. Binding profiles and output
+manifests can be saved for repeatable generation.
 
 - Python 3.10 or newer
 - PySide6 6.6 or newer

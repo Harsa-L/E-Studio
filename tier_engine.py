@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from numbers import Real
 from typing import List, Dict, Any
 
 
@@ -29,22 +30,31 @@ class TierResolver:
     @staticmethod
     def resolve(spec: TierTargetSpec, article_data: Dict[str, Any]) -> Dict[str, Any]:
         tiers = article_data.get("TIERS", [])
+        if not isinstance(tiers, list):
+            tiers = []
         search_chain = [spec.primary_index] + spec.fallback_indices
 
         # 1. Recherche par ordre de priorité dans la chaîne
         for index in search_chain:
             if 0 <= index < len(tiers):
                 selected = tiers[index]
+                if not isinstance(selected, dict) or "qty" not in selected:
+                    continue
+                unit_price = selected.get("unit_price")
+                if isinstance(unit_price, bool) or not isinstance(unit_price, Real):
+                    continue
+                unit_price = float(unit_price)
                 return {
                     "text_qty": f"{spec.keyword_prefix} {selected['qty']} {selected.get('unit', spec.unit_label)}",
-                    "unit_price": selected["unit_price"],
-                    "formatted_price": f"{selected['unit_price']:.0f} {article_data.get('CURRENCY', 'FCFA')}",
+                    "unit_price": unit_price,
+                    "formatted_price": f"{unit_price:.0f} {article_data.get('CURRENCY', 'FCFA')}",
                     "is_fallback": index != spec.primary_index
                 }
 
         # 2. Repli sur le prix standard
-        if spec.fallback_to_base_price and "SELLING_PRICE" in article_data:
-            base_price = article_data["SELLING_PRICE"]
+        base_price = article_data.get("SELLING_PRICE")
+        if spec.fallback_to_base_price and isinstance(base_price, Real) and not isinstance(base_price, bool):
+            base_price = float(base_price)
             return {
                 "text_qty": f"{spec.keyword_prefix} 1 {spec.unit_label}",
                 "unit_price": base_price,

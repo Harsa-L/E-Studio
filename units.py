@@ -4,6 +4,9 @@ from __future__ import annotations
 from enum import Enum
 
 
+EDITOR_DPI = 96.0
+
+
 class Unit(str, Enum):
     PIXEL = "px"
     MILLIMETER = "mm"

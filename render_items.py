@@ -6,7 +6,7 @@ from typing import Optional, List, Dict, Any, Type
 from PySide6.QtCore import Qt, QRectF, QPointF
 from PySide6.QtGui import QPainter, QImage, QPen, QBrush, QColor, QFont, QPainterPath
 
-from units import Length
+from units import EDITOR_DPI, Length
 from rich_text_models import Paragraph, CharFormat, VAlign, Overflow, SizingMode
 from rich_layout import LayoutEngine, LayoutResult
 
@@ -74,7 +74,12 @@ class TextItem(BaseItem):
         super().__init__(rect, rotation, z_index)
         self.paragraphs: List[Paragraph] = paragraphs or [Paragraph()]
         # Utilisation de Length (Value Object) pour les marges
-        self.margins = (Length.from_pt(5), Length.from_pt(5), Length.from_pt(2.5), Length.from_pt(2.5))
+        self.margins = (
+            Length.from_pt(5, dpi=EDITOR_DPI),
+            Length.from_pt(5, dpi=EDITOR_DPI),
+            Length.from_pt(2.5, dpi=EDITOR_DPI),
+            Length.from_pt(2.5, dpi=EDITOR_DPI),
+        )
         self.valign: VAlign = VAlign.TOP
         self.overflow: Overflow = Overflow.AUTOFIT_SHRINK
         self.wrap: bool = True
@@ -279,12 +284,17 @@ class QRCodeItem(BaseItem):
                 cell_h = target_rect.height() / rows
                 painter.setPen(Qt.NoPen)
                 painter.setBrush(QBrush(QColor(self.module_color)))
-                path = QPainterPath()
+                antialiasing = painter.renderHints()
+                painter.setRenderHint(QPainter.Antialiasing, False)
                 for row in range(rows):
                     for column in range(cols):
                         if matrix[row][column]:
-                            path.addRect(QRectF(target_rect.x() + column * cell_w, target_rect.y() + row * cell_h, cell_w + 0.1, cell_h + 0.1))
-                painter.drawPath(path)
+                            left = round(target_rect.x() + column * cell_w)
+                            top = round(target_rect.y() + row * cell_h)
+                            right = round(target_rect.x() + (column + 1) * cell_w)
+                            bottom = round(target_rect.y() + (row + 1) * cell_h)
+                            painter.fillRect(QRectF(left, top, max(1, right - left), max(1, bottom - top)), QBrush(QColor(self.module_color)))
+                painter.setRenderHints(antialiasing)
         else:
             painter.setPen(QPen(QColor(self.module_color), 1.0))
             painter.drawRect(target_rect)
@@ -295,12 +305,13 @@ class QRCodeItem(BaseItem):
 class BarcodeItem(BaseItem):
     """Render Code 128 or EAN-13 barcodes as vector bars."""
 
-    def __init__(self, rect: QRectF, code: str = "123456789012", barcode_type: str = "code128", show_text: bool = True, bar_color: str = "#000000", rotation: float = 0.0, z_index: int = 0):
+    def __init__(self, rect: QRectF, code: str = "123456789012", barcode_type: str = "code128", show_text: bool = True, bar_color: str = "#000000", text_gap: float = 0.0, rotation: float = 0.0, z_index: int = 0):
         super().__init__(rect, rotation, z_index)
         self.code = code
         self.barcode_type = barcode_type.lower()
         self.show_text = show_text
         self.bar_color = bar_color
+        self.text_gap = text_gap
 
     def apply_data_binding(self, record: Dict[str, Any]) -> None:
         if self.binding_key and self.binding_key in record:
@@ -317,8 +328,8 @@ class BarcodeItem(BaseItem):
             try:
                 barcode = EAN13(self.code.zfill(12)[:12]) if self.barcode_type == "ean13" else Code128(self.code)
                 pattern = barcode.build()[0]
-                text_height = Length.from_pt(10) if self.show_text else 0.0
-                bars_height = max(1.0, target_rect.height() - text_height)
+                text_height = Length.from_pt(10, dpi=EDITOR_DPI) if self.show_text else 0.0
+                bars_height = max(1.0, target_rect.height() - text_height - self.text_gap)
                 module_width = target_rect.width() / len(pattern)
                 painter.setPen(Qt.NoPen)
                 painter.setBrush(QBrush(QColor(self.bar_color)))
@@ -332,7 +343,7 @@ class BarcodeItem(BaseItem):
                     font = QFont("Monospace")
                     font.setPointSizeF(8.0)
                     painter.setFont(font)
-                    painter.drawText(QRectF(target_rect.x(), target_rect.y() + bars_height, target_rect.width(), text_height), Qt.AlignCenter, self.code)
+                    painter.drawText(QRectF(target_rect.x(), target_rect.y() + bars_height + self.text_gap, target_rect.width(), text_height), Qt.AlignCenter, self.code)
             except Exception as error:
                 painter.setPen(QPen(QColor("#d32f2f"), 1.0))
                 painter.drawRect(target_rect)

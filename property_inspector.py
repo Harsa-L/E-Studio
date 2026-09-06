@@ -3,12 +3,15 @@
 from typing import List, Dict, Any
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QFormLayout, QGroupBox, 
-    QLineEdit, QDoubleSpinBox, QSpinBox, QCheckBox, QLabel, QScrollArea
+    QLineEdit, QDoubleSpinBox, QSpinBox, QCheckBox, QLabel, QScrollArea,
+    QComboBox, QPushButton, QColorDialog
 )
 from PySide6.QtCore import QSignalBlocker, Qt
+from PySide6.QtGui import QColor
 
 from label_items import BaseLabelItem
 from item_properties import PropertySpec, MULTIPLE_VALUES_INDICATOR
+from domain_fields import DOMAIN_FIELDS
 
 
 class PropertyInspectorWidget(QWidget):
@@ -105,10 +108,45 @@ class PropertyInspectorWidget(QWidget):
             check = QCheckBox()
             check.toggled.connect(lambda val, p=prop: self._apply_val(p, val))
             return check
+        elif prop.key == "domain_field":
+            combo = QComboBox()
+            combo.setEditable(True)
+            combo.addItem("Personnalisé", "")
+            for field in DOMAIN_FIELDS:
+                combo.addItem(f"{field.label} ({field.key.value})", field.key.value)
+            combo.currentTextChanged.connect(lambda _text, p=prop, c=combo: self._apply_val(p, c.currentData() or c.currentText()))
+            return combo
+        elif prop.key in {"valign", "overflow", "barcode_type"}:
+            combo = QComboBox()
+            values = {
+                "valign": ("TOP", "MIDDLE", "BOTTOM"),
+                "overflow": ("CLIP", "VISIBLE", "AUTOFIT_SHRINK", "AUTOFIT_GROW"),
+                "barcode_type": ("code128", "ean13"),
+            }[prop.key]
+            combo.addItems(values)
+            combo.currentTextChanged.connect(lambda val, p=prop: self._apply_val(p, val))
+            return combo
+        elif "color" in prop.key:
+            button = QPushButton()
+            button.setToolTip("Choisir une couleur")
+            button.clicked.connect(lambda checked=False, p=prop, b=button: self._choose_color(p, b))
+            return button
         else:
             line = QLineEdit()
             line.textChanged.connect(lambda val, p=prop: self._apply_val(p, val))
             return line
+
+    def _choose_color(self, prop: PropertySpec, button: QPushButton):
+        color = QColorDialog.getColor(QColor(prop.getter()), self, prop.label)
+        if color.isValid():
+            value = color.name(QColor.HexArgb) if color.alpha() < 255 else color.name()
+            prop.setter(value)
+            button.setStyleSheet(f"background-color: {value};")
+
+    @staticmethod
+    def _set_color_button(button: QPushButton, value: Any):
+        color = QColor(str(value))
+        button.setStyleSheet(f"background-color: {color.name(QColor.HexArgb)};" if color.isValid() else "")
 
     def _apply_val(self, prop: PropertySpec, val: Any):
         if self._is_updating or not self.selected_items: return
@@ -138,6 +176,22 @@ class PropertyInspectorWidget(QWidget):
                     if isinstance(widget, QDoubleSpinBox) and is_identical: widget.setValue(float(v))
                     elif isinstance(widget, QSpinBox) and is_identical: widget.setValue(int(v))
                     elif isinstance(widget, QCheckBox) and is_identical: widget.setChecked(bool(v))
-                    elif isinstance(widget, QLineEdit): widget.setText(str(v) if is_identical else MULTIPLE_VALUES_INDICATOR)
+                    elif isinstance(widget, QComboBox) and is_identical:
+                        if prop_spec.key == "domain_field":
+                            index = widget.findData(str(v))
+                            if index >= 0:
+                                widget.setCurrentIndex(index)
+                            else:
+                                widget.setEditText(str(v))
+                        else:
+                            widget.setCurrentText(str(v))
+                    elif isinstance(widget, QPushButton) and is_identical:
+                        self._set_color_button(widget, v)
+                    elif isinstance(widget, QLineEdit):
+                        widget.setPlaceholderText("" if is_identical else MULTIPLE_VALUES_INDICATOR)
+                        widget.setText(str(v) if is_identical else "")
+
+                    if isinstance(widget, (QDoubleSpinBox, QSpinBox, QCheckBox)):
+                        widget.setToolTip("Valeurs multiples" if not is_identical else "")
 
         self._is_updating = False

@@ -20,7 +20,7 @@ class WeightedArticle(BaseArticle):
     def to_binding_context(self) -> Dict[str, Any]:
         ctx = super().to_binding_context()
         ctx.update({
-            "PRIX_KILO": f"{self.price_per_kg():.2f} € / kg",
+            "PRIX_KILO": f"{self.price_per_kg():.2f} {self.currency} / kg",
             "TARE": f"{self.tare_weight_g}g" if self.tare_weight_g > 0 else "",
             "IS_WEIGHTED": True,
         })
@@ -40,7 +40,7 @@ class BulkCaseArticle(BaseArticle):
     def to_binding_context(self) -> Dict[str, Any]:
         ctx = super().to_binding_context()
         ctx.update({
-            "UNIT_PRICE_IN_CASE": f"{self.unit_price_inside_case():.2f} € / unité",
+            "UNIT_PRICE_IN_CASE": f"{self.unit_price_inside_case():.2f} {self.currency} / unité",
             "CASE_LABEL": f"Carton de {int(self.packaging.case_size)} {self.packaging.pack_unit}",
             "IS_BULK": True,
         })

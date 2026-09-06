@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import (
     QDialog, QFormLayout, QLineEdit, QDoubleSpinBox, 
-    QDialogButtonBox, QVBoxLayout, QGroupBox
+    QDialogButtonBox, QVBoxLayout, QGroupBox, QFileDialog, QPushButton, QComboBox
 )
 from template_model import LabelTemplate, Margins
 
@@ -62,10 +62,39 @@ class NewGabaritDialog(QDialog):
         main_layout.addWidget(inner_group)
         main_layout.addWidget(outer_group)
 
+        reference_group = QGroupBox("Image de référence (non imprimée)")
+        reference_layout = QFormLayout(reference_group)
+        self.background_path = QLineEdit()
+        browse = QPushButton("Choisir…")
+        browse.clicked.connect(self._choose_background)
+        reference_layout.addRow("Fichier :", self.background_path)
+        reference_layout.addRow("Sélection :", browse)
+        self.background_opacity = QDoubleSpinBox()
+        self.background_opacity.setRange(0.0, 1.0)
+        self.background_opacity.setSingleStep(0.05)
+        self.background_opacity.setValue(0.35)
+        reference_layout.addRow("Opacité :", self.background_opacity)
+        self.background_fit = QComboBox()
+        self.background_fit.addItem("Contenir", "contain")
+        self.background_fit.addItem("Couvrir", "cover")
+        self.background_fit.addItem("Étirer", "stretch")
+        reference_layout.addRow("Ajustement :", self.background_fit)
+        main_layout.addWidget(reference_group)
+
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         main_layout.addWidget(buttons)
+
+    def _choose_background(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Choisir l'image de référence",
+            "",
+            "Images (*.png *.jpg *.jpeg *.bmp *.webp)",
+        )
+        if path:
+            self.background_path.setText(path)
 
     def get_template(self) -> LabelTemplate:
         return LabelTemplate(
@@ -83,5 +112,8 @@ class NewGabaritDialog(QDialog):
                 bottom=self.margin_out_top.value(),
                 left=self.margin_out_left.value(),
                 right=self.margin_out_left.value()
-            )
+            ),
+            background_image_path=self.background_path.text().strip() or None,
+            background_image_opacity=self.background_opacity.value(),
+            background_image_fit=self.background_fit.currentData(),
         )

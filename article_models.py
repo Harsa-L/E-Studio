@@ -40,9 +40,12 @@ class TaxInfo:
     tax_rate: float = 20.0       # En pourcentage (20.0 = 20%)
     tax_type: str = "INCLUDED"   # "INCLUDED" (TTC) ou "EXCLUDED" (HT)
 
-    def calculate_vat_amount(self, price_ttc: float) -> float:
-        """Calcule le montant exact de la taxe à partir du prix TTC."""
-        return price_ttc - (price_ttc / (1.0 + (self.tax_rate / 100.0)))
+    def calculate_vat_amount(self, price: float) -> float:
+        """Calculate tax from either a tax-included or tax-excluded price."""
+        rate = self.tax_rate / 100.0
+        if self.tax_type == "EXCLUDED":
+            return price * rate
+        return price - (price / (1.0 + rate))
 
 
 @dataclass
@@ -101,7 +104,8 @@ class BaseArticle(ABC):
         pkg = self.packaging
 
         vat_amount = t.calculate_vat_amount(p.effective_price)
-        price_ht = p.effective_price - vat_amount
+        price_ht = p.effective_price if t.tax_type == "EXCLUDED" else p.effective_price - vat_amount
+        price_ttc = p.effective_price + vat_amount if t.tax_type == "EXCLUDED" else p.effective_price
 
         return {
             # Identification & Vendeur
@@ -144,6 +148,8 @@ class BaseArticle(ABC):
             # Taxes & Prix HT
             "PRICE_HT": price_ht,
             "PRICE_HT_DISPLAY": f"{price_ht:.2f} {self.currency}",
+            "PRICE_TTC": price_ttc,
+            "PRICE_TTC_DISPLAY": f"{price_ttc:.2f} {self.currency}",
             "TAX_AMOUNT": vat_amount,
             "TAX_AMOUNT_DISPLAY": f"{vat_amount:.2f} {self.currency}",
             "TAX": t.tax,
