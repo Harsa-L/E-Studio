@@ -1,0 +1,425 @@
+{
+  "name": "A",
+  "width_mm": 148.0,
+  "height_mm": 105.0,
+  "inner_margins_mm": {
+    "top": 5.0,
+    "bottom": 5.0,
+    "left": 5.0,
+    "right": 5.0
+  },
+  "outer_margins_mm": {
+    "top": 3.0,
+    "bottom": 3.0,
+    "left": 3.0,
+    "right": 3.0
+  },
+  "layout_kind": "fixed",
+  "layout_mode": "single",
+  "bg_color": "#FFFFFF",
+  "bg_opacity": 1.0,
+  "background_image_path": null,
+  "background_image_opacity": 0.35,
+  "background_image_fit": "contain",
+  "background_image_visible": true,
+  "background_image_locked": true,
+  "background_image_in_output": false,
+  "items": [
+    {
+      "id": "text_1",
+      "type": "RichLabelItem",
+      "x_mm": 115.82,
+      "y_mm": 90.42,
+      "w_mm": 20.0,
+      "h_mm": 6.0,
+      "keep_aspect_ratio": false,
+      "rich_type": "text",
+      "rich_properties": {
+        "binding_key": null,
+        "rotation": 0.0,
+        "z_index": 0,
+        "paragraphs": [
+          {
+            "runs": [
+              {
+                "text": "*T&C Apply",
+                "format": {
+                  "font_family": "Arial",
+                  "font_size": 8.0,
+                  "bold": false,
+                  "italic": false,
+                  "underline": false,
+                  "strikethrough": false,
+                  "color": "#000000",
+                  "baseline_shift": 0.0,
+                  "tracking": 0.0,
+                  "small_caps": false
+                }
+              }
+            ],
+            "format": {
+              "alignment": "left",
+              "indent_left": 0.0,
+              "indent_right": 0.0,
+              "indent_first_line": 0.0,
+              "line_spacing": 1.0,
+              "space_before": 0.0,
+              "space_after": 0.0,
+              "bullet": null
+            }
+          }
+        ],
+        "fill_color": null,
+        "fill_opacity": 255,
+        "border_color": "#cccccc",
+        "border_width": 0.0,
+        "border_style": 1,
+        "corner_radius": 0.0,
+        "margins_px": [
+          6.666666666666667,
+          6.666666666666667,
+          3.3333333333333335,
+          3.3333333333333335
+        ],
+        "valign": "TOP",
+        "overflow": "AUTOFIT_SHRINK",
+        "wrap": true,
+        "sizing_mode": "FREE_RESIZE",
+        "font_scale": 0.993359375,
+        "line_spacing_reduction": 0.0,
+        "placeholder": ""
+      }
+    },
+    {
+      "id": "field_3",
+      "type": "DomainFieldLabelItem",
+      "x_mm": 38.83,
+      "y_mm": 47.83,
+      "w_mm": 60.0,
+      "h_mm": 18.0,
+      "keep_aspect_ratio": false,
+      "rich_type": "text",
+      "rich_properties": {
+        "binding_key": "SELLING_PRICE",
+        "rotation": 0.0,
+        "z_index": 0,
+        "paragraphs": [
+          {
+            "runs": [
+              {
+                "text": "[SELLING_PRICE]",
+                "format": {
+                  "font_family": "Arial",
+                  "font_size": 18.0,
+                  "bold": false,
+                  "italic": false,
+                  "underline": false,
+                  "strikethrough": false,
+                  "color": "#000000",
+                  "baseline_shift": 0.0,
+                  "tracking": 0.0,
+                  "small_caps": false
+                }
+              }
+            ],
+            "format": {
+              "alignment": "left",
+              "indent_left": 0.0,
+              "indent_right": 0.0,
+              "indent_first_line": 0.0,
+              "line_spacing": 1.0,
+              "space_before": 0.0,
+              "space_after": 0.0,
+              "bullet": null
+            }
+          }
+        ],
+        "fill_color": null,
+        "fill_opacity": 255,
+        "border_color": "#cccccc",
+        "border_width": 0.0,
+        "border_style": 1,
+        "corner_radius": 0.0,
+        "margins_px": [
+          6.666666666666667,
+          6.666666666666667,
+          3.3333333333333335,
+          3.3333333333333335
+        ],
+        "valign": "TOP",
+        "overflow": "AUTOFIT_SHRINK",
+        "wrap": true,
+        "sizing_mode": "FREE_RESIZE",
+        "font_scale": 0.993359375,
+        "line_spacing_reduction": 0.0,
+        "placeholder": ""
+      },
+      "domain_field": "SELLING_PRICE"
+    },
+    {
+      "id": "field_1",
+      "type": "DomainFieldLabelItem",
+      "x_mm": 7.62,
+      "y_mm": 7.62,
+      "w_mm": 60.0,
+      "h_mm": 18.0,
+      "keep_aspect_ratio": false,
+      "rich_type": "text",
+      "rich_properties": {
+        "binding_key": "BRAND_INFO",
+        "rotation": 0.0,
+        "z_index": 0,
+        "paragraphs": [
+          {
+            "runs": [
+              {
+                "text": "[BRAND_INFO]",
+                "format": {
+                  "font_family": "Arial",
+                  "font_size": 18.0,
+                  "bold": false,
+                  "italic": false,
+                  "underline": false,
+                  "strikethrough": false,
+                  "color": "#000000",
+                  "baseline_shift": 0.0,
+                  "tracking": 0.0,
+                  "small_caps": false
+                }
+              }
+            ],
+            "format": {
+              "alignment": "left",
+              "indent_left": 0.0,
+              "indent_right": 0.0,
+              "indent_first_line": 0.0,
+              "line_spacing": 1.0,
+              "space_before": 0.0,
+              "space_after": 0.0,
+              "bullet": null
+            }
+          }
+        ],
+        "fill_color": null,
+        "fill_opacity": 255,
+        "border_color": "#cccccc",
+        "border_width": 0.0,
+        "border_style": 1,
+        "corner_radius": 0.0,
+        "margins_px": [
+          6.666666666666667,
+          6.666666666666667,
+          3.3333333333333335,
+          3.3333333333333335
+        ],
+        "valign": "TOP",
+        "overflow": "AUTOFIT_SHRINK",
+        "wrap": true,
+        "sizing_mode": "FREE_RESIZE",
+        "font_scale": 0.993359375,
+        "line_spacing_reduction": 0.0,
+        "placeholder": ""
+      },
+      "domain_field": "BRAND_INFO"
+    },
+    {
+      "id": "field_2",
+      "type": "DomainFieldLabelItem",
+      "x_mm": 8.42,
+      "y_mm": 19.79,
+      "w_mm": 60.0,
+      "h_mm": 10.0,
+      "keep_aspect_ratio": false,
+      "rich_type": "text",
+      "rich_properties": {
+        "binding_key": "ITEMDESCRIPTION",
+        "rotation": 0.0,
+        "z_index": 0,
+        "paragraphs": [
+          {
+            "runs": [
+              {
+                "text": "[ITEMDESCRIPTION]",
+                "format": {
+                  "font_family": "Arial",
+                  "font_size": 18.0,
+                  "bold": false,
+                  "italic": false,
+                  "underline": false,
+                  "strikethrough": false,
+                  "color": "#000000",
+                  "baseline_shift": 0.0,
+                  "tracking": 0.0,
+                  "small_caps": false
+                }
+              }
+            ],
+            "format": {
+              "alignment": "left",
+              "indent_left": 0.0,
+              "indent_right": 0.0,
+              "indent_first_line": 0.0,
+              "line_spacing": 1.0,
+              "space_before": 0.0,
+              "space_after": 0.0,
+              "bullet": null
+            }
+          }
+        ],
+        "fill_color": null,
+        "fill_opacity": 255,
+        "border_color": "#cccccc",
+        "border_width": 0.0,
+        "border_style": 1,
+        "corner_radius": 0.0,
+        "margins_px": [
+          6.666666666666667,
+          6.666666666666667,
+          3.3333333333333335,
+          3.3333333333333335
+        ],
+        "valign": "TOP",
+        "overflow": "AUTOFIT_SHRINK",
+        "wrap": true,
+        "sizing_mode": "FREE_RESIZE",
+        "font_scale": 0.93359375,
+        "line_spacing_reduction": 0.0,
+        "placeholder": ""
+      },
+      "domain_field": "ITEMDESCRIPTION"
+    },
+    {
+      "id": "field_4",
+      "type": "DomainFieldLabelItem",
+      "x_mm": 6.3,
+      "y_mm": 88.04,
+      "w_mm": 50.0,
+      "h_mm": 10.0,
+      "keep_aspect_ratio": false,
+      "rich_type": "text",
+      "rich_properties": {
+        "binding_key": "PARTNO",
+        "rotation": 0.0,
+        "z_index": 0,
+        "paragraphs": [
+          {
+            "runs": [
+              {
+                "text": "[PARTNO]",
+                "format": {
+                  "font_family": "Arial",
+                  "font_size": 18.0,
+                  "bold": false,
+                  "italic": false,
+                  "underline": false,
+                  "strikethrough": false,
+                  "color": "#000000",
+                  "baseline_shift": 0.0,
+                  "tracking": 0.0,
+                  "small_caps": false
+                }
+              }
+            ],
+            "format": {
+              "alignment": "left",
+              "indent_left": 0.0,
+              "indent_right": 0.0,
+              "indent_first_line": 0.0,
+              "line_spacing": 1.0,
+              "space_before": 0.0,
+              "space_after": 0.0,
+              "bullet": null
+            }
+          }
+        ],
+        "fill_color": null,
+        "fill_opacity": 255,
+        "border_color": "#cccccc",
+        "border_width": 0.0,
+        "border_style": 1,
+        "corner_radius": 0.0,
+        "margins_px": [
+          6.666666666666667,
+          6.666666666666667,
+          3.3333333333333335,
+          3.3333333333333335
+        ],
+        "valign": "TOP",
+        "overflow": "AUTOFIT_SHRINK",
+        "wrap": true,
+        "sizing_mode": "FREE_RESIZE",
+        "font_scale": 0.93359375,
+        "line_spacing_reduction": 0.0,
+        "placeholder": ""
+      },
+      "domain_field": "PARTNO"
+    },
+    {
+      "id": "field_5",
+      "type": "DomainFieldLabelItem",
+      "x_mm": 40.69,
+      "y_mm": 57.88,
+      "w_mm": 60.0,
+      "h_mm": 18.0,
+      "keep_aspect_ratio": false,
+      "rich_type": "text",
+      "rich_properties": {
+        "binding_key": "SELLING_UNIT",
+        "rotation": 0.0,
+        "z_index": 0,
+        "paragraphs": [
+          {
+            "runs": [
+              {
+                "text": "[SELLING_UNIT]",
+                "format": {
+                  "font_family": "Arial",
+                  "font_size": 18.0,
+                  "bold": false,
+                  "italic": false,
+                  "underline": false,
+                  "strikethrough": false,
+                  "color": "#000000",
+                  "baseline_shift": 0.0,
+                  "tracking": 0.0,
+                  "small_caps": false
+                }
+              }
+            ],
+            "format": {
+              "alignment": "left",
+              "indent_left": 0.0,
+              "indent_right": 0.0,
+              "indent_first_line": 0.0,
+              "line_spacing": 1.0,
+              "space_before": 0.0,
+              "space_after": 0.0,
+              "bullet": null
+            }
+          }
+        ],
+        "fill_color": null,
+        "fill_opacity": 255,
+        "border_color": "#cccccc",
+        "border_width": 0.0,
+        "border_style": 1,
+        "corner_radius": 0.0,
+        "margins_px": [
+          6.666666666666667,
+          6.666666666666667,
+          3.3333333333333335,
+          3.3333333333333335
+        ],
+        "valign": "TOP",
+        "overflow": "AUTOFIT_SHRINK",
+        "wrap": true,
+        "sizing_mode": "FREE_RESIZE",
+        "font_scale": 0.993359375,
+        "line_spacing_reduction": 0.0,
+        "placeholder": ""
+      },
+      "domain_field": "SELLING_UNIT"
+    }
+  ],
+  "schema_version": 1
+}

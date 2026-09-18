@@ -1,7 +1,7 @@
 """Calculateur de disposition grille multi-étiquettes sur papier physique."""
 
 from dataclasses import dataclass
-from template_model import Margins
+from core.models.template_model import Margins
 
 
 @dataclass

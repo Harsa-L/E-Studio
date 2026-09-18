@@ -20,6 +20,7 @@ from tier_grouping import TierGroupingConfig, group_article_rows
 from domain_fields import DomainFieldKey, canonical_domain_key
 from generation_session import GenerationSession, GenerationState, TemplateSnapshot
 from template_library import TemplateLibrary
+from business_model import TemplateBusinessProfile
 
 try:
     from openpyxl import Workbook
@@ -67,6 +68,22 @@ class TemplateModelTests(unittest.TestCase):
         LabelTemplate.from_json(json.dumps(payload))
 
         self.assertIsInstance(payload["inner_margins_mm"], dict)
+
+    def test_template_supports_dynamic_layout_metadata(self) -> None:
+        template = LabelTemplate(
+            name="Dynamic shelf",
+            width_mm=100.0,
+            height_mm=30.0,
+            inner_margins_mm=Margins(2.0, 2.0, 2.0, 2.0),
+            outer_margins_mm=Margins(1.0, 1.0, 1.0, 1.0),
+            layout_kind="grid",
+            layout_mode="sheet",
+        )
+
+        restored = LabelTemplate.from_json(template.to_json())
+
+        self.assertEqual(restored.layout_kind, "grid")
+        self.assertEqual(restored.layout_mode, "sheet")
 
 
 class PricingTests(unittest.TestCase):
@@ -146,6 +163,22 @@ class ApplicationSettingsTests(unittest.TestCase):
 
         self.assertEqual(restored, AppSettings())
 
+    def test_boundary_warning_settings_are_serializable(self) -> None:
+        settings = AppSettings(
+            boundary_warning_enabled=True,
+            boundary_warning_color="#ff8800",
+            boundary_warning_flash_ms=180,
+            boundary_warning_style="outline",
+            boundary_tolerance_mm=1.5,
+        )
+
+        restored = AppSettings.from_dict(settings.to_dict())
+
+        self.assertEqual(restored.boundary_warning_color, "#ff8800")
+        self.assertEqual(restored.boundary_warning_flash_ms, 180)
+        self.assertEqual(restored.boundary_warning_style, "outline")
+        self.assertEqual(restored.boundary_tolerance_mm, 1.5)
+
 
 class WorkflowStateTests(unittest.TestCase):
     def test_generation_uses_an_immutable_template_snapshot(self) -> None:
@@ -183,9 +216,97 @@ class WorkflowStateTests(unittest.TestCase):
         self.assertEqual(len(summaries), 2)
         self.assertEqual([summary.valid for summary in summaries], [False, True])
 
+    def test_generation_session_tracks_explicit_lifecycle(self) -> None:
+        template = LabelTemplate(
+            name="Lifecycle",
+            width_mm=20,
+            height_mm=20,
+            inner_margins_mm=Margins(0, 0, 0, 0),
+            outer_margins_mm=Margins(0, 0, 0, 0),
+        )
+        session = GenerationSession(TemplateSnapshot.from_template(template))
+
+        session.transition_to("ready")
+        session.transition_to("preparing")
+        session.transition_to("previewing")
+
+        self.assertEqual(session.workflow_state, "previewing")
+        self.assertEqual(session.state, GenerationState.PREVIEWING)
+
+    def test_generation_session_rejects_invalid_transitions(self) -> None:
+        template = LabelTemplate(
+            name="Invalid lifecycle",
+            width_mm=20,
+            height_mm=20,
+            inner_margins_mm=Margins(0, 0, 0, 0),
+            outer_margins_mm=Margins(0, 0, 0, 0),
+        )
+        session = GenerationSession(TemplateSnapshot.from_template(template))
+
+        with self.assertRaises(ValueError):
+            session.transition_to("completed")
+
+    def test_generation_session_exposes_action_capabilities(self) -> None:
+        template = LabelTemplate(
+            name="Lifecycle actions",
+            width_mm=20,
+            height_mm=20,
+            inner_margins_mm=Margins(0, 0, 0, 0),
+            outer_margins_mm=Margins(0, 0, 0, 0),
+        )
+        session = GenerationSession(TemplateSnapshot.from_template(template))
+
+        session.transition_to("preparing")
+        actions = session.available_actions()
+
+        self.assertTrue(actions["import_excel"])
+        self.assertFalse(actions["export_png"])
+
+    def test_generation_session_exposes_business_decision_contract(self) -> None:
+        template = LabelTemplate(
+            name="Contract",
+            width_mm=40,
+            height_mm=20,
+            inner_margins_mm=Margins(1, 1, 1, 1),
+            outer_margins_mm=Margins(0, 0, 0, 0),
+        )
+        session = GenerationSession(TemplateSnapshot.from_template(template))
+
+        decision = session.business_decision()
+
+        self.assertEqual(decision.state, GenerationState.CREATED)
+        self.assertTrue(decision.can_import)
+        self.assertFalse(decision.can_preview)
+        self.assertFalse(decision.can_export)
+        self.assertFalse(decision.has_blockers)
+
+        session.transition_to("preparing")
+        session.transition_to("previewing")
+        preview_decision = session.business_decision()
+        self.assertTrue(preview_decision.can_preview)
+        self.assertTrue(preview_decision.can_export)
+
     def test_domain_aliases_resolve_to_canonical_binding_keys(self) -> None:
         self.assertEqual(canonical_domain_key("DIV.NAME"), DomainFieldKey.DIV_NAME.value)
         self.assertEqual(canonical_domain_key("EAN"), DomainFieldKey.PRODUCT_SCAN.value)
+
+
+class BusinessModelTests(unittest.TestCase):
+    def test_template_business_profile_tracks_printable_area_and_readiness(self) -> None:
+        template = LabelTemplate(
+            name="Business label",
+            width_mm=100.0,
+            height_mm=50.0,
+            inner_margins_mm=Margins(6.0, 6.0, 8.0, 8.0),
+            outer_margins_mm=Margins(2.0, 2.0, 2.0, 2.0),
+        )
+
+        profile = TemplateBusinessProfile.from_template(template)
+
+        self.assertTrue(profile.is_generation_ready)
+        self.assertEqual(profile.printable_width_mm, 84.0)
+        self.assertEqual(profile.printable_height_mm, 38.0)
+        self.assertEqual(profile.safe_zone_mm, 10.0)
 
 
 class TierGroupingTests(unittest.TestCase):
